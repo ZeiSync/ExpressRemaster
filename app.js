@@ -10,7 +10,11 @@ const bodyParser = require("body-parser");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users.routes");
 const authRouter = require("./routes/auth.routes");
+const booksRouter = require("./routes/books.routes");
+const cartRouter = require("./routes/cart.routes");
+
 const middleware = require("./middleware/auth.middleware");
+const sessionMiddleware = require("./middleware/session.middleware");
 
 const app = express();
 
@@ -23,9 +27,12 @@ app.use(bodyParser.json()); //utilizes the body-parser package
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(sessionMiddleware);
 
 app.use("/", indexRouter);
 app.use("/users", middleware.requireAuth, usersRouter);
+app.use("/books", booksRouter);
+app.use("/cart", cartRouter);
 
 app.use("/auth", authRouter);
 // catch 404 and forward to error handler
