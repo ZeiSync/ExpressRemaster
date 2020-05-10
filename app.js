@@ -8,7 +8,7 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const usersRouter = require("./routes/users.routes");
 
 const app = express();
 
