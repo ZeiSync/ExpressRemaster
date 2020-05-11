@@ -1,5 +1,6 @@
 /** @format */
 const db = require("../db");
+var _ = require("lodash");
 
 module.exports.addToCart = (req, res, next) => {
   let bookId = req.params.id;
@@ -20,5 +21,19 @@ module.exports.addToCart = (req, res, next) => {
     .set("cart." + bookId, amout + 1)
     .write();
 
+  let bookOrders = db
+    .get("sessions")
+    .find({ id: sessionId })
+    .get("cart")
+    .value();
+
+  let quantity = 0;
+  _.forEach(bookOrders, (value) => {
+    return (quantity += value);
+  });
+
+  res.cookie("quantity", quantity, {
+    signed: true,
+  });
   res.redirect("/books");
 };
