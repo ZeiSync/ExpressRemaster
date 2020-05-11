@@ -1,3 +1,4 @@
+block vars
 doctype html
 html
   head
@@ -29,5 +30,7 @@ html
             a.nav-link(href='/contact') Contact
           li.nav-item
             a.nav-link(href='/profile') Profile 
+          li.nav-item
+            a.nav-link(href='/transactions')="Cart( "+(qty || 0)+" )"
     .container
       block content

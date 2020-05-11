@@ -3,15 +3,17 @@ const shortid = require("shortid");
 const db = require("../db");
 
 let books = db.get("books").value();
+
 module.exports.index = (req, res) => {
   let user = { isAdmin: false };
   if (req.signedCookies.userId) {
     user = db.get("users").find({ id: req.signedCookies.userId }).value();
   }
-
+  let quantity = req.signedCookies.quantity;
   res.render("books/index", {
     user: user,
     books: books,
+    quantity: quantity,
   });
 };
 
