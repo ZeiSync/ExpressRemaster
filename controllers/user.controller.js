@@ -76,16 +76,15 @@ module.exports.postUpdate = async (req, res) => {
     return;
   }
 
-  let userUpdate = {
-    name: req.body.name,
-  };
   try {
-    await User.findByIdAndUpdate({ _id: req.body.id }, userUpdate);
+    await User.updateOne(
+      { _id: req.body.id },
+      { $set: { name: req.body.name } }
+    );
     console.log("Document is successfully updated.");
     res.redirect("/users");
   } catch (error) {
     console.log(`Error has occurred: ${error}`);
+    res.json(error);
   }
-
-  res.redirect("/users");
 };
