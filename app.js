@@ -7,6 +7,17 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
 
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost:27017/express-remaster", {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log(`MongoDB Connected…`);
+  })
+  .catch((err) => console.log(err));
+
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users.routes");
 const authRouter = require("./routes/auth.routes");
