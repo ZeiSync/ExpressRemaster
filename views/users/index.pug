@@ -4,7 +4,7 @@ block content
   h1.py-2 User
   a.position-absolute.btn.btn-outline-primary(href="/users/create") New
   form.d-flex.justify-content-end.pb-3(action="/users/search" method="GET")
-    input.form-control.w-25(type="text", name="q" value=q)
+    input.form-control.w-25(type="text", name="query" value=query)
     button.ml-1.btn.btn-outline-primary Search
   table(class="table")
       thead
@@ -13,7 +13,7 @@ block content
           th(scope='col') Phone
           th(scope='col') Action
       tbody
-       each user in data.results
+       each user in users
          tr
            td= user.name
            td

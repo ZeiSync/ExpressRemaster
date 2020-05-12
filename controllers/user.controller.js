@@ -1,63 +1,91 @@
 /** @format */
 const shortid = require("shortid");
 const bcrypt = require("bcrypt");
+const User = require("../models/user.model");
 
 const db = require("../db");
 
-module.exports.index = (req, res) => {
-  res.render("users/index", {
-    data: res.paginatedResults,
-  });
+module.exports.index = async (req, res) => {
+  try {
+    const user = await User.find({});
+    res.render("users/index", {
+      users: user,
+    });
+  } catch (error) {
+    res.json("Error has occurred", err);
+  }
 };
 
-module.exports.search = (req, res) => {
-  let query = req.query.q;
-  let users = db.get("users").value();
+module.exports.search = async (req, res) => {
+  try {
+    let query = req.query.query;
+    let users = await User.find({});
 
-  let userFilter = {};
-  userFilter.results = users.filter((user) => {
-    return user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
-  });
+    let userFiltered = users.filter((user) => {
+      return user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+    });
 
-  console.log(userFilter);
-  res.render("users/index", { data: userFilter, q: query }); //pagination this too (feature)
+    res.render("users/index", { users: userFiltered, query: query }); //pagination this too (feature)
+  } catch (error) {
+    res.json(error); //pagination this too (feature)
+  }
 };
 
 module.exports.create = (req, res) => {
   res.render("users/create");
 };
 
-module.exports.postCreate = (req, res) => {
-  let data = {
-    id: shortid.generate(),
+module.exports.postCreate = async (req, res) => {
+  const newUser = new User({
     name: req.body.name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
-  };
+    isAdmin: true,
+  });
 
-  db.get("users").push(data).write();
-  res.redirect("/users");
+  try {
+    await newUser.save();
+    res.redirect("/users");
+  } catch (error) {
+    res.json("/users");
+  }
 };
 
-module.exports.delete = (req, res) => {
-  let id = req.params.id;
-  db.get("users").remove({ id: id }).write();
-  res.redirect("/users");
+module.exports.delete = async (req, res) => {
+  try {
+    await User.remove({ _id: req.params.id });
+    res.redirect("/users");
+  } catch (error) {
+    res.json(error);
+  }
 };
 
-module.exports.update = (req, res) => {
-  const user = db.get("users").find({ id: req.params.id }).value();
-  res.render("users/update", { user: user });
+module.exports.update = async (req, res) => {
+  //const user = db.get("users").find({ id: req.params.id }).value();
+  try {
+    let user = await User.findById({ _id: req.params.id });
+    res.render("users/update", { user: user });
+  } catch (error) {
+    res.json(error);
+  }
 };
 
-module.exports.postUpdate = (req, res) => {
+module.exports.postUpdate = async (req, res) => {
   if (!req.body.name) {
     res.render("users/update", { id: req.body.id, name: req.body.name });
     return;
   }
-  db.get("users")
-    .find({ id: req.body.id })
-    .assign({ name: req.body.name })
-    .write();
+
+  let userUpdate = {
+    name: req.body.name,
+  };
+  try {
+    await User.findByIdAndUpdate({ _id: req.body.id }, userUpdate);
+    console.log("Document is successfully updated.");
+    res.redirect("/users");
+  } catch (error) {
+    console.log(`Error has occurred: ${error}`);
+  }
+
   res.redirect("/users");
 };
