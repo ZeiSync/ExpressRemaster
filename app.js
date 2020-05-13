@@ -24,6 +24,7 @@ const booksRouter = require("./routes/books.routes");
 const cartRouter = require("./routes/cart.routes");
 const transactionRouter = require("./routes/transaction.routes");
 const authApi = require("./api/routes/auth.routes");
+const transactionApi = require("./api/routes/transaction.routes");
 
 const middleware = require("./middleware/auth.middleware");
 const sessionMiddleware = require("./middleware/session.middleware");
@@ -42,11 +43,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(sessionMiddleware);
 
 app.use("/", indexRouter);
-app.use("/api", authApi);
+
 app.use("/users", middleware.requireAuth, usersRouter);
 app.use("/books", booksRouter);
 app.use("/cart", cartRouter);
 app.use("/transactions", middleware.requireAuth, transactionRouter);
+app.use("/api", authApi, transactionApi);
 
 app.use("/auth", authRouter);
 // catch 404 and forward to error handler
