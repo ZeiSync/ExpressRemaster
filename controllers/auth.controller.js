@@ -1,14 +1,13 @@
 /** @format */
-
-const db = require("../db");
 const bcrypt = require("bcrypt");
+const User = require("../models/user.model");
 
 module.exports.login = (req, res) => {
   res.render("auth/login");
 };
 
 module.exports.postLogin = async (req, res) => {
-  const user = db.get("users").find({ email: req.body.email }).value();
+  const user = User.findOne({ email: req.body.email });
 
   if (!user) {
     res.render("auth/login", {

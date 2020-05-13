@@ -6,7 +6,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
-
 const mongoose = require("mongoose");
 
 mongoose
@@ -24,6 +23,7 @@ const authRouter = require("./routes/auth.routes");
 const booksRouter = require("./routes/books.routes");
 const cartRouter = require("./routes/cart.routes");
 const transactionRouter = require("./routes/transaction.routes");
+const authApi = require("./api/routes/auth.routes");
 
 const middleware = require("./middleware/auth.middleware");
 const sessionMiddleware = require("./middleware/session.middleware");
@@ -42,6 +42,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(sessionMiddleware);
 
 app.use("/", indexRouter);
+app.use("/api", authApi);
 app.use("/users", middleware.requireAuth, usersRouter);
 app.use("/books", booksRouter);
 app.use("/cart", cartRouter);
